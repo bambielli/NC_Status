@@ -1,0 +1,197 @@
+<html>
+ <head>
+
+ <HTA:APPLICATION
+     APPLICATIONNAME="Open DOC/TW"
+     SCROLL="no"
+     SINGLEINSTANCE="yes"
+     WINDOWSTATE="normal"
+	 ICON="#"
+ >
+ <style type="text/css">
+
+ table {
+         width: 565px;
+         border-spacing: 5px;
+         border: 1px solid black;
+         border-collapse: collapse;
+ }
+
+ th, td {
+ 		width: 25%;
+ 		text-align: left;
+ 		border: 1px solid black;
+ }
+ </style>
+ <script language="VBScript">
+
+ Sub ScanNCFolders
+    Dim fs, f, files, System, Component, Total, TTotal, STotal, CTotal, Folder_Array, Complete_Path, writeStr, objRow, objTable, objCellPath, objCellSyst, objCellComp, objCellTotal
+
+    Folder_Array = Array("(5)XXXX","(6)XXXX","(7)XXXX","(8)XXXX","(9)XXXX","(10)XXXX","(11)XXXX", "(12)XXXX", "(13)XXXX", "(14)XXXX", "(15)XXXX", "(16)XXXX", "(17)XXXX", "(18)XXXX")
+
+    Set fs = CreateObject("Scripting.FileSystemObject")
+
+    TTotal = 0
+    STotal = 0
+    CTotal = 0
+
+    For each Path in Folder_Array
+
+    	Complete_Path = "//XXX/XX/XX/XX/XX/XXXX/" & Path & "/(A)XXXX/"
+   		Set f = fs.GetFolder(Complete_Path)
+    	Set files = f.Files
+
+    	System = 0
+    	Component = 0
+    	Total = 0
+
+    	'Parse file name to determine what type of NC it is
+
+	    For each f1 In files
+			If Mid(f1.Name,4,3) = "NCR" And Left(f1.Name,1) <> "~" Then
+				Total = Total + 1
+				If Mid(f1.Name,15,1) = "s" Or Mid(f1.Name,15,1) = "S" Then
+					System = System + 1
+				ElseIf Mid(f1.Name,15,1) = "c" Or Mid(f1.Name,15,1) = "C" Then
+					Component = Component + 1
+				End If
+			End If
+		Next
+
+		'for debug purposes only
+		'MsgBox Path & ":   System: " & CStr(System) & "   Component: " & CStr(Component) & "   Total: " & CStr(Total)
+
+		Set objTable = window.document.getElementById("the_table")
+		Set objRow = objTable.insertRow()
+		objRow.id = Path
+
+		Set objCellPath = objRow.insertCell()
+		Set objCellSyst = objRow.insertCell()
+		Set objCellComp = objRow.insertCell()
+		Set objCellTotal = objRow.insertCell()
+
+		objCellPath.innerHTML = "<a href='"&Complete_Path&"'>"&Path&"</a>"
+		objCellPath.id = Path & "-Path"
+
+		objCellSyst.innerHTML = System
+		objCellSyst.id = Path & "-System"
+		if System > 0 Then
+			objCellSyst.style.backgroundColor = "Red"
+		End If
+		STotal = STotal + System
+
+		objCellComp.innerHTML = Component
+		objCellComp.id = Path & "-Component"
+		CTotal = CTotal + Component
+
+		objCellTotal.innerHTML = Total
+		objCellTotal.id = Path & "-Total"
+		TTotal = TTotal + Total
+	Next
+
+	Set objTable = window.document.getElementById("the_table")
+	Set objRow = objTable.insertRow()
+	Set ObjCellPath = objRow.insertCell()
+	Set objCellSyst = objRow.insertCell()
+	Set objCellComp = objRow.insertCell()
+	Set objCellTotal = objRow.insertCell()
+
+	objCellPath.innerHTML = "<Strong>Total Number of NCs waiting for Evaluation</strong>"
+	objCellPath.id = "TotalTitle"
+
+	objCellSyst.innerHTML = "<Strong>"&CStr(STotal)&"</Strong>"
+	objCellSyst.id = "STotal"
+
+	objCellComp.innerHTML = "<Strong>"&CStr(CTotal)&"</Strong>"
+	objCellComp.id = "CTotal"
+
+	objCellTotal.innerHTML = "<Strong>"&CStr(TTotal)&"</Strong>"
+	objCellTotal.id = "TTotal"
+
+End Sub
+
+ Sub RefreshNumbers
+    Dim fs, f, files, System, Component, Total, TTotal, STotal, CTotal, Folder_Array, Complete_Path, writeStr, objRow, objTable, objCellSyst, objCellComp, objCellTotal
+
+    'Note XXXX & XXXX are not included in the following array
+
+    Folder_Array = Array("(5)XXXX","(6)XXXX","(7)XXXX","(8)XXXX","(9)XXXX","(10)XXXX","(11)XXXX", "(12)XXXX", "(13)XXXX", "(14)XXXX", "(15)XXXX", "(16)XXXX", "(17)XXXX", "(18)XXXX")
+
+    Set fs = CreateObject("Scripting.FileSystemObject")
+
+    TTotal = 0
+    STotal = 0
+    CTotal = 0
+
+    For each Path in Folder_Array
+    	Complete_Path = "//XXXX/XX/XX/XXXX/XXXX/" & Path & "/(A)XXXX/"
+   		Set f = fs.GetFolder(Complete_Path)
+    	Set files = f.Files
+    	System = 0
+    	Component = 0
+    	Total = 0
+	    For each f1 In files
+			If Mid(f1.Name,4,3) = "NCR" And Left(f1.Name,1) <> "~" Then
+				Total = Total + 1
+				If Mid(f1.Name,15,1) = "s" Or Mid(f1.Name,15,1) = "S" Then
+					System = System + 1
+				ElseIf Mid(f1.Name,15,1) = "c" Or Mid(f1.Name,15,1) = "C" Then
+					Component = Component + 1
+				End If
+			End If
+		Next
+
+		'for debug purposes only
+		'MsgBox Path & ":   System: " & CStr(System) & "   Component: " & CStr(Component) & "   Total: " & CStr(Total)
+
+		Set objCellSyst = window.document.getElementById(Path&"-System")
+		Set objCellComp = window.document.getElementById(Path&"-Component")
+		Set objCellTotal = window.document.getElementById(Path&"-Total")
+
+		objCellSyst.innerHTML = System
+		if System > 0 Then
+			objCellSyst.style.backgroundColor = "Red"
+		End If
+		STotal = STotal + System
+
+		objCellComp.innerHTML = Component
+		CTotal = CTotal + Component
+
+		objCellTotal.innerHTML = Total
+		TTotal = TTotal + Total
+
+	Next
+
+	Set objCellSyst = window.document.getElementById("STotal")
+	Set objCellComp = window.document.getElementById("CTotal")
+	Set objCellTotal = window.document.getElementById("TTotal")
+
+	objCellSyst.innerHTML = "<Strong>"&CStr(STotal)&"</Strong>"
+	objCellComp.innerHTML = "<Strong>"&CStr(CTotal)&"</Strong>"
+	objCellTotal.innerHTML = "<Strong>"&CStr(TTotal)&"</Strong>"
+
+End Sub
+
+ Sub Window_onLoad
+ 	window.resizeTo 605, 515
+ 	ScanNCFolders
+ End Sub
+
+ </script>
+ </head>
+
+ <body>
+	 <font face="XXXXX">
+	 <center>
+	 <a href="file://XXXX/XX/XX/XX/XX/XXXX/" style="width:100px;">Link to NC Folders</a>
+	 <input type="button" value="Refresh Numbers" name="Refresh NC Folders" style="font-family:'XXXXXX';" onClick="RefreshNumbers">
+	 </center>
+	 <table id="the_table">
+	 	<tr>
+	 		<th>Area:</th><th>System:</th><th>Component:</th><th>Total:</th>
+	 	</tr>
+	 	</br>
+	 </table>
+ </body>
+ </html>
