@@ -111,6 +111,7 @@
 
 End Sub
 
+// NOTE: this is one of my greatest shames... this is not DRY. This hurts me to come back and look at. If you are looking at this code, please know that I know that this is bad.
  Sub RefreshNumbers
     Dim fs, f, files, System, Component, Total, TTotal, STotal, CTotal, Folder_Array, Complete_Path, writeStr, objRow, objTable, objCellSyst, objCellComp, objCellTotal
 
